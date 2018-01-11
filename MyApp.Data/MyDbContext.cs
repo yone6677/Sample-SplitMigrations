@@ -8,6 +8,7 @@ namespace MyApp.Data
         public MyDbContext(DbContextOptions<MyDbContext> options)
             : base(options)
         {
+            Database.Migrate();
         }
 
         public DbSet<MyEntity> MyEntities { get; set; }

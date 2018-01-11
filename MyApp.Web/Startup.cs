@@ -11,26 +11,22 @@ namespace MyApp.Web
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<MyDbContext>(
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection"),
-                    sqlServerOptions => sqlServerOptions.MigrationsAssembly("MyApp.Migrations")));
+                    sqlServerOptions => sqlServerOptions.MigrationsAssembly("MyApp.Data")));
         }
 
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IHostingEnvironment env)
         {
             loggerFactory.AddConsole();
 
@@ -39,7 +35,7 @@ namespace MyApp.Web
                 {
                     var db = context.RequestServices.GetService<MyDbContext>();
 
-                    await context.Response.WriteAsync("Entities: " + await db.MyEntities.CountAsync());
+                    //await context.Response.WriteAsync("Entities: " + await db.MyEntities.CountAsync());
                 });
         }
     }
